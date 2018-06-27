@@ -3,6 +3,8 @@ import logging
 import time
 
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeRegressor
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -35,9 +37,19 @@ if __name__ == '__main__':
 
     input_file = '../data/wine.data'
     logger.debug('reading data from %s' % input_file)
-    data = pd.read_csv(input_file, names=names)
-    logger.debug(data.shape)
-    logger.debug(data.columns.values)
+    df = pd.read_csv(input_file, names=names)
+    logger.debug(df.shape)
+    variables = df.columns.values
+    logger.debug(variables)
+
+    logger.debug('scores predicting using all other variables:')
+    for target_column in variables:
+        X = df.drop([target_column], axis=1).values
+        y = df[target_column].values
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+        clf_dt = DecisionTreeRegressor(max_depth=10)
+        clf_dt.fit(X_train, y_train)
+        logger.debug('target: %s score: %.4f' % (target_column, clf_dt.score(X_test, y_test)))
 
     logger.debug('done')
     finish_time = time.time()
