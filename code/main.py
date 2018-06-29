@@ -69,6 +69,12 @@ if __name__ == '__main__':
         clf_dt.fit(X_train, y_train)
         score = clf_dt.score(X_test, y_test)
         logger.debug('target: %s score: %.4f' % (target_column, score))
+        logger.debug('model classes: %s' % clf_dt.classes_)
+        logger.debug('model feature importance: %s' % clf_dt.feature_importances_)
+        logger.debug('model class count: %d' % clf_dt.n_classes_)
+        logger.debug('model feature count: %d' % clf_dt.n_features_)
+        logger.debug('model output count: %d' % clf_dt.n_outputs_)
+        logger.debug(clf_dt.tree_)
 
     logger.debug('done')
     finish_time = time.time()
