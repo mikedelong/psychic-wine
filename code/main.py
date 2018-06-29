@@ -58,6 +58,10 @@ if __name__ == '__main__':
             high_score = score
             best_depth = max_depth
         logger.debug('target: %s score: %.4f' % (target_column, score))
+        logger.debug('model feature importance: %s' % clf_dt.feature_importances_)
+        logger.debug('total importance: %.4f' % sum(clf_dt.feature_importances_))
+        for index, item in enumerate(clf_dt.feature_importances_):
+            logger.debug('%s has importance %.3E' % (names[index + 1], item))
 
     logger.debug('high score: %.4f and occurs at max depth: %d ' % (high_score, best_depth))
     for max_depth in range(best_depth, best_depth + 1):
