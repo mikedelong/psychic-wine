@@ -20,9 +20,11 @@ import logging
 import time
 
 import numpy as np
+import pandas as pd
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
 
 if __name__ == '__main__':
     start_time = time.time()
@@ -37,18 +39,30 @@ if __name__ == '__main__':
     logger.debug('started')
 
     random_state = 2
-    do_iris = True
+    do_iris = False
     if do_iris:
         iris = load_iris()
         X = iris.data
         y = iris.target
         X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=random_state)
-
         estimator = DecisionTreeClassifier(max_leaf_nodes=3, random_state=random_state)
         estimator.fit(X_train, y_train)
 
     else:
-        pass
+        names = ['alcohol', 'malic_acid', 'ash', 'alcalinity_of_ash', 'magnesium', 'total_phenols', 'flavanoid_phenols',
+                 'nonflavanoid_phenols', 'proanthcynins', 'color_intensity', 'hue', 'od_ratio', 'proline']
+
+        input_file = '../data/wine.data'
+        logger.debug('reading data from %s' % input_file)
+        df = pd.read_csv(input_file, names=names)
+        variables = df.columns.values
+
+        target_column = 'alcohol'
+        X = df.drop([target_column], axis=1).values
+        y = df[target_column].values
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random_state)
+        estimator = DecisionTreeRegressor(max_depth=3, random_state=random_state)
+        estimator.fit(X_train, y_train)
 
     # The decision estimator has an attribute called tree_  which stores the entire
     # tree structure and allows access to low level attributes. The binary tree
