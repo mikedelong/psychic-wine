@@ -36,12 +36,13 @@ if __name__ == '__main__':
     console_handler.setLevel(logging.DEBUG)
     logger.debug('started')
 
+    random_state = 2
     iris = load_iris()
     X = iris.data
     y = iris.target
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=random_state)
 
-    estimator = DecisionTreeClassifier(max_leaf_nodes=3, random_state=0)
+    estimator = DecisionTreeClassifier(max_leaf_nodes=3, random_state=random_state)
     estimator.fit(X_train, y_train)
 
     # The decision estimator has an attribute called tree_  which stores the entire
@@ -76,7 +77,7 @@ if __name__ == '__main__':
         node_depth[node_id] = parent_depth + 1
 
         # If we have a test node
-        if (children_left[node_id] != children_right[node_id]):
+        if children_left[node_id] != children_right[node_id]:
             stack.append((children_left[node_id], parent_depth + 1))
             stack.append((children_right[node_id], parent_depth + 1))
         else:
@@ -105,15 +106,14 @@ if __name__ == '__main__':
     # a group of samples. First, let's make it for the sample.
 
     sample_id = 0
-    node_index = node_indicator.indices[node_indicator.indptr[sample_id]:
-                                        node_indicator.indptr[sample_id + 1]]
+    node_index = node_indicator.indices[node_indicator.indptr[sample_id]:node_indicator.indptr[sample_id + 1]]
 
     logger.debug('Rules used to predict sample %s: ' % sample_id)
     for node_id in node_index:
         if leave_id[sample_id] != node_id:
             continue
 
-        if (X_test[sample_id, feature[node_id]] <= threshold[node_id]):
+        if X_test[sample_id, feature[node_id]] <= threshold[node_id]:
             threshold_sign = "<="
         else:
             threshold_sign = ">"
@@ -128,9 +128,8 @@ if __name__ == '__main__':
 
     common_node_id = np.arange(n_nodes)[common_nodes]
 
-    logger.debug("The following samples %s share the node %s in the tree"
-                 % (sample_ids, common_node_id))
-    logger.debug("It is %s %% of all nodes." % (100 * len(common_node_id) / n_nodes,))
+    logger.debug("The following samples %s share the node %s in the tree" % (sample_ids, common_node_id))
+    logger.debug("It is %s%% of all nodes." % (100 * len(common_node_id) / n_nodes,))
 
     logger.debug('done')
     finish_time = time.time()
